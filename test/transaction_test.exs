@@ -11,19 +11,9 @@ defmodule Martin.TransactionTest do
   end
 
   test "scan/2" do
-    [one, two, three, four, five] = Enum.map(1..5, fn _ -> Item.new(2000, :a) end)
-    [six, seven, eight] = Enum.map(1..3, fn _ -> Item.new(100, :b) end)
-
-    assert [Scheme.new(3, 800, :a), Scheme.new(2, 10, :b)]
-           |> Transaction.new()
-           |> Transaction.scan(one)
-           |> Transaction.scan(two)
-           |> Transaction.scan(three)
-           |> Transaction.scan(four)
-           |> Transaction.scan(five)
-           |> Transaction.scan(six)
-           |> Transaction.scan(seven)
-           |> Transaction.scan(eight)
-           |> Map.get(:total) == 6520
+    a = Enum.map(1..5, fn _ -> Item.new(2000, :a) end)
+    b = Enum.map(1..3, fn _ -> Item.new(100, :b) end)
+    trans = Transaction.new([Scheme.new(3, 800, :a), Scheme.new(2, 10, :b)])
+    assert (a ++ b) |> Enum.reduce(trans, &Transaction.scan(&2, &1)) |> Map.get(:total) == 6520
   end
 end
